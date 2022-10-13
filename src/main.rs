@@ -1,10 +1,12 @@
+use std::fmt::Debug;
+
 fn main() {
-    let square = Square::<u32>::new(5);
-    // let square_float = Square::<f64>::new(5.4);
+    let square = Square::<u32>::new(5, 1);
+    let square_float = Square::<f64>::new(5.4, 1.0);
     // let square_string = Square::<String>::new("6");
 
     println!("square area is {}", square.area());
-    // println!("square_float area is {}", square_float.area());
+    println!("square_float area is {}", square_float.area());
     // println!("square_string area is {}", square_string.area());
 
     // let triangle = Triangle::new(14.9, 20.1);
@@ -15,18 +17,32 @@ fn main() {
     // println!("pyramid_triangle volume is {}", pyramid_triangle.volume());
 }
 
-pub trait Form {
-    pub fn area();
-    pub fn volume();
+
+struct Square<T>
+{
+    side: f64,
+    test: T,
 }
 
-struct Square{
-    edge_length: u32;
-}
-
-impl Form for Square {
-    pub fn area(&self){
-        let result = *self*self;
-        return result;
+impl<T: TryInto<f64>> Square<T>
+{
+    fn new( t: T, u: T) -> Self 
+    where <T as TryInto<f64>>::Error: Debug {
+        Square { side : t.try_into().unwrap(), test : u}
     }
+}
+
+
+trait Area {
+    fn area(&self) -> f64;
+}
+
+impl<T> Area for Square<T>
+
+{
+    fn area(&self) -> f64 {
+        let edge = self.side;
+        return edge * edge;
+    }
+
 }
