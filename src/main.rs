@@ -1,8 +1,8 @@
 use std::fmt::Debug;
 
 fn main() {
-    let square = Square::<u32>::new(5, 1);
-    let square_float = Square::<f64>::new(5.4, 1.0);
+    let square = Square::<u32>::new(5);
+    let square_float = Square::<f64>::new(5.4);
     // let square_string = Square::<String>::new("6");
 
     println!("square area is {}", square.area());
@@ -18,17 +18,18 @@ fn main() {
 }
 
 
-struct Square<T>
+struct Square<T: Copy>
 {
     side: f64,
     test: T,
 }
 
-impl<T: TryInto<f64>> Square<T>
+impl<T: TryInto<f64> + Copy> Square<T>
 {
-    fn new( t: T, u: T) -> Self 
+    fn new( t: T) -> Self 
     where <T as TryInto<f64>>::Error: Debug {
-        Square { side : t.try_into().unwrap(), test : u}
+        
+        Square { side : t.try_into().unwrap(), test : t}
     }
 }
 
@@ -37,7 +38,7 @@ trait Area {
     fn area(&self) -> f64;
 }
 
-impl<T> Area for Square<T>
+impl<T: Copy> Area for Square<T>
 
 {
     fn area(&self) -> f64 {
