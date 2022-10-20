@@ -1,46 +1,36 @@
+// declarative macros looks like function
+// `println!` or `vec!` are examples or declarative macros
 
+// They're declared with the keyword `macro_rules!`
+macro_rules! simple_vec {
+    // Basically, a decl macro is a `match` statement
+    // inputs are matched against each arm
+    ( $( $x:expr ),* ) => { // Here I match 0 or more expressions, comma separated
+        {
+            let mut temp_vec = Vec::new();
+            $(
+                temp_vec.push($x);
+            )* // Here the $()* indicate that this code will repeat as many times as there are inputs
+            temp_vec // We return the vector
+        }
+    };
+    // Add another arm here so that we can initialize vec3 in main()
+    ($a:expr;$b:expr) => { // Here I match 0 or more expressions, comma separated
+        {
+            let mut temp_vec = Vec::with_capacity($b);
+            for _ in 0..$b {
+                temp_vec.push($a);
+            }
+            temp_vec // We return the vector
+        }
+    };
+}
 
 fn main() {
-    let square = Square::new(5);
-    let square_float = Square::new(5.4);
-    // let square_string = Square::<String>::new("6");
+    let vec1 = simple_vec!('a', 'b', 'c');
+    let vec2 = simple_vec!(1, 2, 3);
+    let vec3 = simple_vec!("coucou";5);
 
-    println!("square area is {}", square.area());
-    println!("square_float area is {}", square_float.area());
-    // println!("square_string area is {}", square_string.area());
-
-    // let triangle = Triangle::new(14.9, 20.1);
-    // let pyramid_square = Pyramid::<Square<u32>, f64>::new(square, 24.3);
-    // let pyramid_triangle = Pyramid::<Triangle<f64>, f64>::new(triangle, 24.3);
-
-    // println!("pyramid_square volume is {}", pyramid_square.volume());
-    // println!("pyramid_triangle volume is {}", pyramid_triangle.volume());
-}
-
-
-struct Square
-{
-    side: f64,
-}
-
-impl Square
-{
-    fn new<T>(t: T) -> Self 
-    where T : TryInto<f64> {
-        Square { side : t.try_into().unwrap_or(0.0)}
-    }
-}
-
-
-trait Area {
-    fn area(&self) -> f64;
-}
-
-impl Area for Square
-{
-    fn area(&self) -> f64 {
-        let edge = self.side;
-        return edge * edge;
-    }
-
+    println!("{:?}\n{:?}", vec1, vec2);
+    println!("{:?}", vec3);
 }
